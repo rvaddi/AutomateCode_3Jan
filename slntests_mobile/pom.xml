@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>SqMobile</groupId>
+  <artifactId>SqMobile</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>SqMobile  NRE Tests (Selenium)</name>
+  <description>SqMobile NRE Tests</description>
+
+  <properties>
+    <skipTests>true</skipTests>
+  </properties>
+
+  <build>
+    <plugins>
+      <!-- Skip selenium tests -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>${skipTests}</skipTests>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+
+
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.6.3.201306030806</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <reportOutputDirectory>${javadoc.dir}</reportOutputDirectory>
+          <excludePackageNames>com.amadeus.selenium.sqmobile.page:com.amadeus.selenium.sqmobile.utils:com.amadeus.selenium.sqmobile.utils.condition</excludePackageNames>
+          <tags>
+              <tag>
+                 <placement>X</placement>
+                 <head>Test Owner:</head>
+             </tag>
+          </tags>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <dependencies>
+    <!-- Amadeus Selenium library -->
+    <dependency>
+      <groupId>com.amadeus.selenium</groupId>
+      <artifactId>selenium-amadeus-utilities</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <!-- Sikuli -->
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>sikuli-script</artifactId>
+      <version>1.0rc3</version>
+    </dependency>
+    <!-- Java Excel Library -->
+    <dependency>
+      <groupId>net.sourceforge.jexcelapi</groupId>
+      <artifactId>jxl</artifactId>
+      <version>2.6</version>
+    </dependency>
+    <!-- Parameter Library -->
+    <dependency>
+      <groupId>com.thoughtworks.paranamer</groupId>
+      <artifactId>paranamer</artifactId>
+      <version>2.5.6</version>
+    </dependency>
+    <!-- MySql Library -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.24</version>
+    </dependency>
+  </dependencies>
+</project>

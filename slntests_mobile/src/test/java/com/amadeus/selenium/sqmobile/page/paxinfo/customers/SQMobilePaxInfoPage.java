@@ -1,0 +1,277 @@
+
+package com.amadeus.selenium.sqmobile.page.paxinfo.customers;
+
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+
+import com.amadeus.selenium.common.PageFactory;
+import com.amadeus.selenium.runner.SeleniumSEPTest;
+import com.amadeus.selenium.sqmobile.page.paxinfo.PaxInfoPage;
+import com.amadeus.selenium.sqmobile.utils.CommonUtils;
+import com.amadeus.selenium.utils.CheckUtils;
+import com.amadeus.selenium.utils.FillUtils;
+import com.amadeus.selenium.utils.WaitUtils;
+
+public class SQMobilePaxInfoPage extends PaxInfoPage{
+
+  String pageName = "SQMobilePaxInfo Page";
+
+  protected final static By LOC_PB_PAXINFO_WARNMESSAGE = By.cssSelector(".msg.warning");
+
+  public SQMobilePaxInfoPage(SeleniumSEPTest test) throws Exception{
+    super(test);
+
+    // Checking if we are on the right page
+    boolean SQMobilePaxInfoPage = WaitUtils.waitForElementPresent(getTest(), LOC_IN_PAX_INFO_CONTACT_EMAIL, 120);
+    if (!SQMobilePaxInfoPage) {
+      WebElement errormsg = CheckUtils.getElement(getTest(), LOC_PB_PAXINFO_WARNMESSAGE);
+      if (errormsg != null && errormsg.isDisplayed()) {
+        reporter.fail(errormsg.getText().trim());
+      }
+      else {
+        reporter.fail("This is not SQMobilePaxInfo Page");
+      }
+    }
+    else {
+      reporter.reportPassed("SQMobilePaxInfo Page", "In SQMobilePaxInfo Page");
+    }
+  }
+
+
+
+  /**
+   * Fill Passenger Infromation
+   * History : Created by Vigneshwaran Balasubramanian
+   * @throws Exception
+   */
+
+  @Override
+  public void fillPaxInfo() throws Exception {
+
+    WebElement paxSections = CheckUtils.getElement(getTest(), LOC_IN_PAX_INFO_PAX_DETAILS);
+    WebElement titleName = null ;
+    WebElement firstName = null;;
+    WebElement lastName = null;;
+    String[] adultTitle = new String[] {"Mr", "Mrs","Ms"};
+    String[] childTitle = new String[] {"Master", "Miss"};
+    String adultFirstName = "ADT";
+    String childFirstName = "CHD";
+    String adultlastName = "TEST";
+    String childlastName = "CHDLASTNAME";
+    int noOfAdults = Integer.parseInt(getValue("Nb Adult"));
+    int noOfChild = Integer.parseInt(getValue("Nb Child"));
+    CommonUtils utils =  PageFactory.getPageObject(CommonUtils.class);
+    String Date = utils.addDate("dd MMMM yyyy",  -700);
+    String childDOBDay = (Date.split(" "))[0];
+    String childDOBMonth = (Date.split(" "))[1];
+    String childDOBYear = (Date.split(" "))[2];
+    int i = 0;
+
+    waitForOverlayLoading(5);
+
+    if (paxSections!=null && paxSections.getText().contains("Adult")){
+      for(int intSector=1; intSector<=noOfAdults; intSector++){
+        Object formatArgs[] = {intSector};
+        titleName = CheckUtils.getElement(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_TITLE.format(formatArgs)));
+        if(titleName!=null && titleName.isDisplayed()){
+          FillUtils.fillInputOrFail(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_TITLE.format(formatArgs)), adultTitle[i], "Child Title not entered");
+          WaitUtils.wait(3);
+          List<WebElement> autoComplete1 = CheckUtils.getElements(getTest(), By.className("ui-corner-all"));
+          for(WebElement opt : autoComplete1){
+            if(opt.isDisplayed()){
+              opt.click();
+            }
+          }
+        }
+        firstName = CheckUtils.getElement(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_FIRST_NAME.format(formatArgs)));
+        if(firstName!=null && firstName.isDisplayed()&&firstName.getText().equals("")){
+          FillUtils.fillInputOrFail(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_FIRST_NAME.format(formatArgs)), adultFirstName, "First Name Field not entered");
+        }
+
+        lastName = CheckUtils.getElement(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_LAST_NAME.format(formatArgs)));
+        if(lastName!=null && lastName.isDisplayed()&&lastName.getText().equals("")){
+          FillUtils.fillInputOrFail(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_LAST_NAME.format(formatArgs)), adultlastName, "Last Name Field not entered");
+        }
+
+        WebElement dayOfBirth = CheckUtils.getElement(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_DAY.format(formatArgs)));
+        if(dayOfBirth!=null && dayOfBirth.isDisplayed()){
+          FillUtils.fillSelectByValueOrFail(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_DAY.format(formatArgs)), "1", "Day of Birth not selected");
+        }
+
+        WebElement monthOfBirth = CheckUtils.getElement(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_MONTH.format(formatArgs)));
+        if(monthOfBirth!=null && monthOfBirth.isDisplayed()){
+          FillUtils.fillSelectByVisibleTextOrFail(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_MONTH.format(formatArgs)), "Jan", "Month of Birth not selected");
+        }
+
+        WebElement yearOfBirth = CheckUtils.getElement(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_YEAR.format(formatArgs)));
+        if(yearOfBirth!=null && yearOfBirth.isDisplayed()){
+          FillUtils.fillSelectByValueOrFail(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_YEAR.format(formatArgs)), "1980", "Year of Birth not selected");
+        }
+      }
+    }
+    else if ( paxSections!=null && paxSections.getText().contains("Child")){
+      for(int intSector=noOfAdults+1; intSector<=noOfChild; intSector++){
+        Object formatArgs[] = {intSector};
+        titleName = CheckUtils.getElement(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_TITLE.format(formatArgs)));
+        if(titleName!=null && titleName.isDisplayed()){
+          FillUtils.fillInputOrFail(getTest(),By.id(LOC_IN_PAX_INFO_PAX_DETAILS_TITLE.format(formatArgs)), childTitle[i], "Child Title not entered");
+          WaitUtils.wait(3);
+        }
+
+        firstName = CheckUtils.getElement(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_FIRST_NAME.format(formatArgs)));
+        if(firstName!=null && firstName.isDisplayed()&&firstName.getText().equals("")){
+          FillUtils.fillInputOrFail(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_FIRST_NAME.format(formatArgs)), adultFirstName, "First Name Field not entered");
+        }
+
+        lastName = CheckUtils.getElement(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_LAST_NAME.format(formatArgs)));
+        if(lastName!=null && lastName.isDisplayed()&&lastName.getText().equals("")){
+          FillUtils.fillInputOrFail(getTest(), By.id(LOC_IN_PAX_INFO_PAX_DETAILS_LAST_NAME.format(formatArgs)), adultlastName, "Last Name Field not entered");
+        }
+
+        WebElement dayOfBirth = CheckUtils.getElement(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_DAY.format(formatArgs)));
+        if(dayOfBirth!=null && dayOfBirth.isDisplayed()){
+          FillUtils.fillSelectByValueOrFail(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_DAY.format(formatArgs)), "1", "Day of Birth not selected");
+        }
+
+        WebElement monthOfBirth = CheckUtils.getElement(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_MONTH.format(formatArgs)));
+        if(monthOfBirth!=null && monthOfBirth.isDisplayed()){
+          FillUtils.fillSelectByVisibleTextOrFail(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_MONTH.format(formatArgs)), "Jan", "Month of Birth not selected");
+        }
+
+        WebElement yearOfBirth = CheckUtils.getElement(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_YEAR.format(formatArgs)));
+        if(yearOfBirth!=null && yearOfBirth.isDisplayed()){
+          FillUtils.fillSelectByValueOrFail(getTest(), By.cssSelector(LOC_IN_PAX_INFO_PAX_DETAILS_DOB_YEAR.format(formatArgs)), "1980", "Year of Birth not selected");
+        }
+      }
+    }
+
+
+    if(titleName!=null) {
+      updateValue("TITLE", titleName.getAttribute("value"));
+    }
+    else {
+      reporter.reportFailed(pageName, "TitleNameElt is null");
+    }
+    if(titleName!=null) {
+      updateValue("FIRST NAME", firstName.getAttribute("value"));
+    }
+    else {
+      reporter.reportFailed(pageName, "FirstNameElt is null");
+    }
+    if(titleName!=null) {
+      updateValue("LAST NAME", lastName.getAttribute("value"));
+    }
+    else {
+      reporter.reportFailed(pageName, "LastNameElt is null");
+    }
+
+  }
+
+  /**
+   * To Fill Contact Information
+   * History : Created by Vigneshwaran Balasubramanian
+   */
+  @Override
+  public void fillContactInfo(String contacType, String areaCode, String contactNumber, String email,
+      String countryCode, String smsNotificationNumber) {
+    // TODO Auto-generated method stub
+    super.fillContactInfo(contacType, areaCode, contactNumber, email, countryCode, smsNotificationNumber);
+  }
+
+
+
+  @Override
+  public void validatePriceDetailsPopUpForRetrievedPNR() throws Exception {
+
+    WebElement PriceDetails = CheckUtils.getElement(getTest(), LOC_IN_PAX_INFO_PRICE_DETAILS);
+    PriceDetails.click();
+
+    List<WebElement> fareTables = CheckUtils.getElements(getTest(), LOC_WL_PAX_INFO_PRICE_DETAILS_POPUP_FARE);
+    WebElement fareTable = null;
+    for (WebElement table : fareTables) {
+      if (table.isDisplayed()) {
+        fareTable = table;
+      }
+    }
+
+    List<WebElement> priceTableHeader = fareTable.findElements(By.className("faretabcolor"));
+    if (!priceTableHeader.get(0).getText().contains("TOTAL FARE") ||
+        !priceTableHeader.get(1).getText().contains("TAXES AND SURCHARGES")) {
+      reporter.reportFailed(getName(), "The price details are not displayed properly in the View Price Details Pop Up");
+    }
+
+    List<WebElement> priceTableDetails = fareTable.findElements(LOC_WL_PAX_INFO_PRICE_DETAILS_POPUP_FARE_TABLE);
+
+    if (priceTableDetails.get(1).getText().contains("(SGAD) Passenger Service Charge") ||
+        priceTableDetails.get(1).getText().contains("(OPAE) Aviation Levy") ||
+        priceTableDetails.get(1).getText().contains("(PHTO) Travel / Non-Resident Head Tax ") ||
+        priceTableDetails.get(1).getText().contains("(OOSE) Passenger Security Service Charge") ||
+        priceTableDetails.get(1).getText().contains("(GBAD) Air Passenger Duty (APD) (Domestic/International)") ||
+        priceTableDetails.get(1).getText().contains("(UBAS) Passenger Service Charge - (Domestic/International)")) {
+      reporter.reportPassed(getName(), "Government Sub-Taxes are Displayed properly");
+    }
+    else {
+      reporter.reportFailed(getName(), "Government Sub-Taxes are not Displayed properly");
+    }
+
+    if (priceTableDetails.get(1).getText().contains("(YQAC) Airline Fuel Surcharge ") ||
+        priceTableDetails.get(1).getText().contains("(YQAD) Airline Insurance")) {
+      reporter.reportPassed(getName(), "Airlines Sub-Taxes are Displayed properly");
+    }
+    else {
+      reporter.reportFailed(getName(), "Airlines Sub-Taxes are not Displayed properly");
+    }
+
+    if (priceTableDetails.get(0).getText().contains("Adult Passenger") ||
+        priceTableDetails.get(1).getText().contains("Adult Passenger")) {
+      if (!priceTableDetails.get(2).getText().contains("Charges to the airlines")) {
+        reporter.reportFailed(getName(), "Airlines Charges are not displayed properly for the ADULT Passengers");
+      }
+      if (!priceTableDetails.get(3).getText().contains("Government, authority and airport charges")) {
+        reporter.reportFailed(getName(), "Government Charges are not displayed properly for the ADULT Passengers");
+      }
+    }
+    else {
+      reporter.reportFailed(getName(),
+      "The price details are not displayed properly  for ADULT Passengers in the View Price Details Pop Up");
+    }
+
+    if (!getValue("NB CHILD").contains("0")) {
+      if (priceTableDetails.get(0).getText().contains("Child Passenger") ||
+          priceTableDetails.get(1).getText().contains("Child Passenger")) {
+
+        if (!priceTableDetails.get(5).getText().contains("Government, authority and airport charges")) {
+          reporter.reportFailed(getName(), "Government Charges are not displayed properly for the CHILD Passengers");
+        }
+        if (!priceTableDetails.get(4).getText().contains("Charges to the airlines")) {
+          reporter.reportFailed(getName(), "Airlines Charges are not displayed properly for the CHILD Passengers");
+        }
+      }
+      else {
+        reporter.reportFailed(getName(),
+        "The price details are not displayed properly  for CHILD Passengers in the View Price Details Pop Up");
+      }
+    }
+
+    String totalPrice = CheckUtils
+    .getElements(getTest(), LOC_PB_PAX_INFO_RETRIEVED_PNR_PRICE_DETAILS_POPUP_TOTAL_PRICE).get(2).getText()
+    .trim();
+    if (totalPrice.equals(getValue("TOTAL FARE").trim())) {
+      reporter.reportPassed(pageName, "Total Price is displayed correctly in the Price details pop up");
+    }
+    else {
+      reporter.reportFailed(pageName, "Total Price is not displayed correctly in the Price Details pop up");
+    }
+
+    List<WebElement> closeLinks = CheckUtils.getElements(getTest(), LOC_WL_PAX_INFO_PRICE_DETAILS_POPUP_CLOSE);
+    for (WebElement close : closeLinks) {
+      if (close.isDisplayed()) {
+        close.click();
+        break;
+      }
+    }
+  }
+
+}
